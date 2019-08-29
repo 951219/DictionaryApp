@@ -1,6 +1,8 @@
 package com.karucode.wordquesser;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -84,12 +86,28 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         String title = "Channel 1";
         String message = "Text channel 1";
 
+        ///-----
+        Intent activityIntent = new Intent(this,WordQuesserStartingScreenActivity.class );
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, activityIntent, 0);
+        //-----
+
+        Intent broadCastIntent = new Intent(this, NotificationReceiver.class);
+        broadCastIntent.putExtra("toastMessag", message);
+        PendingIntent actionIntent = PendingIntent.getBroadcast(this, 0, broadCastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //----
         android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_notification_1)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE).build();
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setColor(Color.BLUE)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .setContentIntent(contentIntent)
+                .addAction(R.mipmap.ic_launcher, "Toast",actionIntent)
+                .build();
 
         notificationManager.notify(1, notification);
     }
