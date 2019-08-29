@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 
+
 public class WordQuesserStartingScreenActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
         Button buttonCheckNotification = findViewById(R.id.button_wordquesser_check_notification);
         buttonCheckNotification.setOnClickListener(V -> testNotification());
+
     }
 
     private void startGame() {
@@ -44,8 +47,10 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
     }
 
     private void testNotification() {
-
+        Intent intent = new Intent(WordQuesserStartingScreenActivity.this, NotificationActivity.class);
+        startActivity(intent);
 
 
     }
+
 }
