@@ -1,16 +1,29 @@
 package com.karucode.wordquesser;
 
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import static com.karucode.wordquesser.Notification.CHANNEL_1_ID;
+import static com.karucode.wordquesser.Notification.CHANNEL_2_ID;
+
 
 public class WordQuesserStartingScreenActivity extends AppCompatActivity {
+
+    private NotificationManagerCompat notificationManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_quesser_starting_screen);
+
+        notificationManager = NotificationManagerCompat.from(this);
 
         Button buttonStartGame = findViewById(R.id.button_wordquesser_start_game);
         buttonStartGame.setOnClickListener(V -> startGame());
@@ -25,7 +38,26 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
         Button buttonCheckNotification = findViewById(R.id.button_wordquesser_check_notification);
-        buttonCheckNotification.setOnClickListener(V -> testNotification());
+        buttonCheckNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                sendOnChannel1(v);
+            }
+        });
+
+        buttonCheckNotification.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(WordQuesserStartingScreenActivity.this, "Send via channel 2", Toast.LENGTH_SHORT).show();
+
+
+                sendOnChannel2(v);
+
+
+                return true;
+            }
+        });
     }
 
     private void startGame() {
@@ -43,9 +75,39 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
     }
 
-    private void testNotification() {
 
 
+
+
+    public void sendOnChannel1(View v){
+
+        String title = "Channel 1";
+        String message = "Text channel 1";
+
+        android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_notification_1)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE).build();
+
+        notificationManager.notify(1, notification);
+    }
+
+    public void sendOnChannel2(View v){
+
+        String title = "Channel 2";
+        String message = "Text channel 2";
+
+        android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_notification_2)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .build();
+
+        notificationManager.notify(1, notification);
 
     }
+
 }
