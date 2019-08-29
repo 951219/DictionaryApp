@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    tools:context=".WordQuesserStartingScreenActivity">
+
+    <Button
+        android:id="@+id/button_wordquesser_start_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Start game" />
+
+    <Button
+        android:id="@+id/button_wordquesser_look_db"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/button_wordquesser_start_game"
+        android:text="Open DB " />
+
+    <Button
+        android:id="@+id/button_wordquesser_add_word"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/button_wordquesser_look_db"
+        android:text="Add a word " />
+
+    <Button
+        android:id="@+id/button_wordquesser_check_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/button_wordquesser_add_word"
+        android:text="Test notification " />
+
+
+</RelativeLayout>
