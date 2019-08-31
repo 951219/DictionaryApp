@@ -7,9 +7,17 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.List;
 
 import static com.karucode.wordquesser.Notification.CHANNEL_1_ID;
 import static com.karucode.wordquesser.Notification.CHANNEL_2_ID;
@@ -18,6 +26,8 @@ import static com.karucode.wordquesser.Notification.CHANNEL_2_ID;
 public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
     private NotificationManagerCompat notificationManager;
+    private WordQuesserUtilities wordQuesserUtilities;
+    HashMap<Integer, Word> list = new HashMap<>();
 
 
     @Override
@@ -25,7 +35,10 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_quesser_starting_screen);
 
+
+        wordQuesserUtilities = new WordQuesserUtilities();
         notificationManager = NotificationManagerCompat.from(this);
+
 
         Button buttonStartGame = findViewById(R.id.button_wordquesser_start_game);
         buttonStartGame.setOnClickListener(V -> startGame());
@@ -60,6 +73,42 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+
+
+
+
+
+// works wit this one
+        BufferedReader reader;
+
+        try{
+            final InputStream file = getAssets().open("WordsAndDefinitions.txt");
+            reader = new BufferedReader(new InputStreamReader(file));
+            String line = reader.readLine();
+            while(line != null){
+                Log.d("StackOverflow", line);
+
+                wordQuesserUtilities.addWordToHasMap(line);
+
+                line = reader.readLine();
+            }
+        } catch(IOException ioe){
+            ioe.printStackTrace();
+        }
+        list = wordQuesserUtilities.getWordsAndDefinitions();
+
+
+
+
+
+        if (list.isEmpty()) {
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "empty", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "not empty", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     private void startGame() {
@@ -68,6 +117,8 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
     }
 
     private void lookDb() {
+        Intent intent = new Intent(WordQuesserStartingScreenActivity.this, LookDb.class);
+        startActivity(intent);
 
     }
 
@@ -78,16 +129,24 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
     }
 
 
+    public void sendOnChannel1(View v) {
 
 
+        List<Integer> randomKeyList = wordQuesserUtilities.getRandomKeyList();
+        Integer correctAnswerKeyKey = wordQuesserUtilities.getCorrectAnswerKey(randomKeyList);
 
-    public void sendOnChannel1(View v){
+//        for (Integer number : randomKeyList) {
+//            words += wordsAndDefinitions.get(number).getWord() + ", ";
+//        }
+//        System.out.println(wordsAndDefinitions.get(randomKey).getDefinition());
 
-        String title = "Channel 1";
-        String message = "Text channel 1";
+        String title = "Guess the word!";
+        String message = list.get(correctAnswerKeyKey).getDefinition();
+
+
 
         ///-----
-        Intent activityIntent = new Intent(this,WordQuesserStartingScreenActivity.class );
+        Intent activityIntent = new Intent(this, WordQuesserStartingScreenActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, activityIntent, 0);
         //-----
 
@@ -106,13 +165,13 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true)
                 .setContentIntent(contentIntent)
-                .addAction(R.mipmap.ic_launcher, "Toast",actionIntent)
+                .addAction(R.mipmap.ic_launcher, "Toast", actionIntent)
                 .build();
 
         notificationManager.notify(1, notification);
     }
 
-    public void sendOnChannel2(View v){
+    public void sendOnChannel2(View v) {
 
         String title = "Channel 2";
         String message = "Text channel 2";

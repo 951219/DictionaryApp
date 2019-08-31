@@ -1,4 +1,4 @@
-package com.karucode.wordquesser;
+package com.karucode.wordquesser.Quiz;
 
 import android.provider.BaseColumns;
 
