@@ -1,4 +1,4 @@
-package com.karucode.wordquesser;
+package com.karucode.wordquesser.Quiz;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.karucode.wordquesser.R;
+import com.karucode.wordquesser.WordQuesserStartingScreenActivity;
 
 public class StartingScreenActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_QUIZ = 1;
