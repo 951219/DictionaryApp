@@ -103,9 +103,9 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
         if (list.isEmpty()) {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB empty", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "not empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not empty", Toast.LENGTH_SHORT).show();
         }
 
 
