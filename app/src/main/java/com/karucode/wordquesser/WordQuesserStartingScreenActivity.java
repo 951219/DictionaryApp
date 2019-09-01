@@ -16,8 +16,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import static com.karucode.wordquesser.Notification.CHANNEL_1_ID;
 import static com.karucode.wordquesser.Notification.CHANNEL_2_ID;
@@ -135,37 +137,42 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         List<Integer> randomKeyList = wordQuesserUtilities.getRandomKeyList();
         Integer correctAnswerKeyKey = wordQuesserUtilities.getCorrectAnswerKey(randomKeyList);
 
-//        for (Integer number : randomKeyList) {
-//            words += wordsAndDefinitions.get(number).getWord() + ", ";
-//        }
-//        System.out.println(wordsAndDefinitions.get(randomKey).getDefinition());
+        Collections.shuffle(randomKeyList);
 
-        String title = "Guess the word!";
         String message = list.get(correctAnswerKeyKey).getDefinition();
-
-
+        String answer1 = list.get(randomKeyList.get(0)).getWord();
+        String answer2 = list.get(randomKeyList.get(1)).getWord();
+        String answer3 = list.get(randomKeyList.get(2)).getWord();
 
         ///-----
-        Intent activityIntent = new Intent(this, WordQuesserStartingScreenActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, activityIntent, 0);
+//        Intent activityIntent = new Intent(this, WordQuesserStartingScreenActivity.class);
+//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, activityIntent, 0);
         //-----
 
         Intent broadCastIntent = new Intent(this, NotificationReceiver.class);
-        broadCastIntent.putExtra("toastMessag", message);
+        broadCastIntent.putExtra("corectAnswer", list.get(correctAnswerKeyKey).getWord());
+
+        broadCastIntent.putExtra("answer1", list.get(randomKeyList.get(0)).getWord());
+        broadCastIntent.putExtra("answer2", list.get(randomKeyList.get(1)).getWord());
+        broadCastIntent.putExtra("answer3", list.get(randomKeyList.get(2)).getWord());
+
         PendingIntent actionIntent = PendingIntent.getBroadcast(this, 0, broadCastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //----
         android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_notification_1)
-                .setContentTitle(title)
+//                .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setColor(Color.BLUE)
-                .setAutoCancel(true)
-                .setOnlyAlertOnce(true)
-                .setContentIntent(contentIntent)
-                .addAction(R.mipmap.ic_launcher, "Toast", actionIntent)
+//                .setAutoCancel(true)
+//                .setOnlyAlertOnce(true)
+//                .setContentIntent(contentIntent) //happens when pressing notification
+                .addAction(R.mipmap.ic_launcher, answer1, actionIntent)
+                .addAction(R.mipmap.ic_launcher, answer2, actionIntent)
+                .addAction(R.mipmap.ic_launcher, answer3, actionIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .build();
 
         notificationManager.notify(1, notification);
