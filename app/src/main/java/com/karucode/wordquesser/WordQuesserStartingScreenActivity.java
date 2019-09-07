@@ -131,6 +131,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
         List<Integer> randomKeyList = wordQuesserUtilities.getRandomKeyList();
         Integer correctAnswerKeyKey = wordQuesserUtilities.getCorrectAnswerKey(randomKeyList);
+        String correctAnswerWord = list.get(correctAnswerKeyKey).getWord();
 
 
 
@@ -148,26 +149,26 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
         Intent answer1Intent = new Intent(this, NotificationReceiver.class);
         answer1Intent.setAction(answer1);
-        answer1Intent.putExtra("corectAnswer", list.get(correctAnswerKeyKey).getWord());
+        answer1Intent.putExtra("corectAnswer", correctAnswerWord);
         PendingIntent action1BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer1Intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         Intent answer2Intent = new Intent(this, NotificationReceiver.class);
         answer2Intent.setAction(answer2);
-        answer2Intent.putExtra("corectAnswer", list.get(correctAnswerKeyKey).getWord());
+        answer2Intent.putExtra("corectAnswer", correctAnswerWord);
         PendingIntent action2BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer2Intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         Intent answer3Intent = new Intent(this, NotificationReceiver.class);
         answer3Intent.setAction(answer3);
-        answer3Intent.putExtra("corectAnswer", list.get(correctAnswerKeyKey).getWord());
+        answer3Intent.putExtra("corectAnswer", correctAnswerWord);
         PendingIntent action3BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer3Intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         //-----
 
-        Intent broadCastIntent = new Intent(this, NotificationReceiver.class);
-        broadCastIntent.putExtra("corectAnswer", list.get(correctAnswerKeyKey).getWord());
+//        Intent broadCastIntent = new Intent(this, NotificationReceiver.class);
+//        broadCastIntent.putExtra("corectAnswer", correctAnswerWord);
 
         android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_notification_1)
