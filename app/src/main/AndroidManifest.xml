@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.karucode.wordquesser">
 
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+
     <application
         android:name=".Notification"
         android:allowBackup="true"
@@ -23,7 +25,10 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name=".RepeatingNotificationReceiver" />
         <receiver android:name=".NotificationReceiver" />
+
+
     </application>
 
 </manifest>

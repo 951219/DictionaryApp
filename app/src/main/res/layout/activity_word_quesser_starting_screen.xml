@@ -39,4 +39,17 @@
         android:text="Test notification " />
 
 
+    <Switch
+        android:id="@+id/wordquesser_hourly_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_wordquesser_check_notification"
+        android:layout_centerInParent="true"
+        android:text="Hourly notification:"
+        android:textOff="OFF"
+        android:textOn="ON"/>
+
+
 </RelativeLayout>
+
+    <!--android:checked="true"-->

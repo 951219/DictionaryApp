@@ -1,7 +1,9 @@
 package com.karucode.wordquesser;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -9,11 +11,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +33,7 @@ import static com.karucode.wordquesser.Notification.CHANNEL_2_ID;
 public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
-
+    private static final String PREFS_NAME = "switchkey";
     private NotificationManagerCompat notificationManager;
     private WordQuesserUtilities wordQuesserUtilities;
     HashMap<Integer, Word> list = new HashMap<>();
@@ -68,14 +75,41 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v) {
                 Toast.makeText(WordQuesserStartingScreenActivity.this, "Send via channel 2", Toast.LENGTH_SHORT).show();
-
-
                 sendOnChannel2(v);
-
-
                 return true;
             }
         });
+
+
+
+        Switch sw = findViewById(R.id.wordquesser_hourly_switch);
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        boolean valueBefore = settings.getBoolean("switchkey", false);
+        sw.setChecked(valueBefore);  // gets value from shared preferences
+
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+                    // The toggle is enabled
+                    changeSwitch(true);
+
+
+                } else {
+                    // The toggle is disabled
+                    changeSwitch(false);
+                }
+
+                // saves to sharedprefs
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("switchkey", isChecked);
+                editor.commit();
+            }
+
+
+        });
+
 
 
 
@@ -121,6 +155,27 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
     private void addWord() {
         Intent intent = new Intent(WordQuesserStartingScreenActivity.this, AddWordActivity.class);
         startActivity(intent);
+    }
+
+    private void changeSwitch(boolean switchState){
+
+        if (switchState){
+
+            Calendar calendar = Calendar.getInstance();
+
+            Intent intent = new Intent(getApplicationContext(), RepeatingNotificationReceiver.class);
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0 ,intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000, pendingIntent);
+
+
+        } else{
+
+
+        }
 
     }
 
@@ -128,13 +183,9 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
     public void sendOnChannel1(View v) {
 
-
         List<Integer> randomKeyList = wordQuesserUtilities.getRandomKeyList();
         Integer correctAnswerKeyKey = wordQuesserUtilities.getCorrectAnswerKey(randomKeyList);
         String correctAnswerWord = list.get(correctAnswerKeyKey).getWord();
-
-
-
 
         Collections.shuffle(randomKeyList);
 
@@ -144,24 +195,21 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         String answer3 = list.get(randomKeyList.get(2)).getWord();
 
 
-
-
-
         Intent answer1Intent = new Intent(this, NotificationReceiver.class);
         answer1Intent.setAction(answer1);
-        answer1Intent.putExtra("corectAnswer", correctAnswerWord);
+        answer1Intent.putExtra("correctAnswer", correctAnswerWord);
         PendingIntent action1BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer1Intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         Intent answer2Intent = new Intent(this, NotificationReceiver.class);
         answer2Intent.setAction(answer2);
-        answer2Intent.putExtra("corectAnswer", correctAnswerWord);
+        answer2Intent.putExtra("correctAnswer", correctAnswerWord);
         PendingIntent action2BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer2Intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         Intent answer3Intent = new Intent(this, NotificationReceiver.class);
         answer3Intent.setAction(answer3);
-        answer3Intent.putExtra("corectAnswer", correctAnswerWord);
+        answer3Intent.putExtra("correctAnswer", correctAnswerWord);
         PendingIntent action3BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer3Intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
@@ -203,6 +251,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
                 .build();
 
         notificationManager.notify(1, notification);
+
 
     }
 

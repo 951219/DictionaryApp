@@ -12,8 +12,10 @@ public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+
+
         String action = intent.getAction();
-        String correctAnswer = intent.getStringExtra("corectAnswer");
+        String correctAnswer = intent.getStringExtra("correctAnswer");
 
         if (action.equals(correctAnswer)) {
 
