@@ -7,15 +7,14 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,11 +22,15 @@ import static com.karucode.wordquesser.Notification.CHANNEL_1_ID;
 import static com.karucode.wordquesser.Notification.CHANNEL_2_ID;
 
 
+
 public class WordQuesserStartingScreenActivity extends AppCompatActivity {
+
+
 
     private NotificationManagerCompat notificationManager;
     private WordQuesserUtilities wordQuesserUtilities;
     HashMap<Integer, Word> list = new HashMap<>();
+
 
 
     @Override
@@ -76,21 +79,14 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
 
-
-
-
 // works wit this one
         BufferedReader reader;
-
         try{
             final InputStream file = getAssets().open("WordsAndDefinitions.txt");
             reader = new BufferedReader(new InputStreamReader(file));
             String line = reader.readLine();
             while(line != null){
-                Log.d("StackOverflow", line);
-
                 wordQuesserUtilities.addWordToHasMap(line);
-
                 line = reader.readLine();
             }
         } catch(IOException ioe){
@@ -100,13 +96,13 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
 
+//        //for cehcking if the hasmap is empty or not
+//        if (list.isEmpty()) {
+//            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB empty", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not empty", Toast.LENGTH_SHORT).show();
+//        }
 
-
-        if (list.isEmpty()) {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB empty", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not empty", Toast.LENGTH_SHORT).show();
-        }
 
 
     }
@@ -129,47 +125,70 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
     }
 
 
+
     public void sendOnChannel1(View v) {
 
 
         List<Integer> randomKeyList = wordQuesserUtilities.getRandomKeyList();
         Integer correctAnswerKeyKey = wordQuesserUtilities.getCorrectAnswerKey(randomKeyList);
+        String correctAnswerWord = list.get(correctAnswerKeyKey).getWord();
 
-//        for (Integer number : randomKeyList) {
-//            words += wordsAndDefinitions.get(number).getWord() + ", ";
-//        }
-//        System.out.println(wordsAndDefinitions.get(randomKey).getDefinition());
 
-        String title = "Guess the word!";
+
+
+        Collections.shuffle(randomKeyList);
+
         String message = list.get(correctAnswerKeyKey).getDefinition();
+        String answer1 = list.get(randomKeyList.get(0)).getWord();
+        String answer2 = list.get(randomKeyList.get(1)).getWord();
+        String answer3 = list.get(randomKeyList.get(2)).getWord();
 
 
 
-        ///-----
-        Intent activityIntent = new Intent(this, WordQuesserStartingScreenActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, activityIntent, 0);
+
+
+        Intent answer1Intent = new Intent(this, NotificationReceiver.class);
+        answer1Intent.setAction(answer1);
+        answer1Intent.putExtra("corectAnswer", correctAnswerWord);
+        PendingIntent action1BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer1Intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        Intent answer2Intent = new Intent(this, NotificationReceiver.class);
+        answer2Intent.setAction(answer2);
+        answer2Intent.putExtra("corectAnswer", correctAnswerWord);
+        PendingIntent action2BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer2Intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        Intent answer3Intent = new Intent(this, NotificationReceiver.class);
+        answer3Intent.setAction(answer3);
+        answer3Intent.putExtra("corectAnswer", correctAnswerWord);
+        PendingIntent action3BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer3Intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
         //-----
 
-        Intent broadCastIntent = new Intent(this, NotificationReceiver.class);
-        broadCastIntent.putExtra("toastMessag", message);
-        PendingIntent actionIntent = PendingIntent.getBroadcast(this, 0, broadCastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        Intent broadCastIntent = new Intent(this, NotificationReceiver.class);
+//        broadCastIntent.putExtra("corectAnswer", correctAnswerWord);
 
-        //----
         android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_notification_1)
-                .setContentTitle(title)
+//                .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setColor(Color.BLUE)
-                .setAutoCancel(true)
-                .setOnlyAlertOnce(true)
-                .setContentIntent(contentIntent)
-                .addAction(R.mipmap.ic_launcher, "Toast", actionIntent)
+//                .setAutoCancel(true)
+//                .setOnlyAlertOnce(true)
+//                .setContentIntent(contentIntent) //happens when pressing notification
+                .addAction(R.mipmap.ic_launcher, answer1, action1BroadCastIntent)
+                .addAction(R.mipmap.ic_launcher, answer2, action2BroadCastIntent)
+                .addAction(R.mipmap.ic_launcher, answer3, action3BroadCastIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .build();
 
         notificationManager.notify(1, notification);
     }
+
 
     public void sendOnChannel2(View v) {
 
@@ -186,5 +205,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         notificationManager.notify(1, notification);
 
     }
+
+
 
 }

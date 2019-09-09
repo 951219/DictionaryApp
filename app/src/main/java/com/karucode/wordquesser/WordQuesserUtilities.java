@@ -56,7 +56,7 @@ public class WordQuesserUtilities extends AppCompatActivity {
     List<Integer> getRandomKeyList() {
 
         List<Integer> usedKeys = new ArrayList<>();
-        int howManyWordsInRound = 4;
+        int howManyWordsInRound = 3;
 
         for (int counter = 0; counter < howManyWordsInRound; counter++) {
             int randomNumber = random.nextInt(wordsAndDefinitions.size());
