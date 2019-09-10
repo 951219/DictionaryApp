@@ -1,33 +1,27 @@
 package com.karucode.wordquesser;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Collections;
+import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
-
-import static com.karucode.wordquesser.Notification.CHANNEL_1_ID;
-import static com.karucode.wordquesser.Notification.CHANNEL_2_ID;
-
 
 
 public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
+    private static final String PREFS_NAME = "switchkey";
+    public static final String NOTIFICATION_ID = "notificationId";
 
-    private NotificationManagerCompat notificationManager;
     private WordQuesserUtilities wordQuesserUtilities;
     HashMap<Integer, Word> list = new HashMap<>();
 
@@ -39,8 +33,9 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_word_quesser_starting_screen);
 
 
-        wordQuesserUtilities = new WordQuesserUtilities();
-        notificationManager = NotificationManagerCompat.from(this);
+        wordQuesserUtilities = WordQuesserUtilities.getInstance();
+        wordQuesserUtilities.readWordsToHashMap(this);
+        list = wordQuesserUtilities.getWordsAndDefinitions();
 
 
         Button buttonStartGame = findViewById(R.id.button_wordquesser_start_game);
@@ -60,48 +55,56 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                sendOnChannel1(v);
+                sendNotificationOnChannel1();
             }
         });
 
         buttonCheckNotification.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(WordQuesserStartingScreenActivity.this, "Send via channel 2", Toast.LENGTH_SHORT).show();
-
-
+                Toast.makeText(WordQuesserStartingScreenActivity.this, "LOOOOONG pressed", Toast.LENGTH_SHORT).show();
                 sendOnChannel2(v);
-
-
                 return true;
             }
         });
 
 
 
-// works wit this one
-        BufferedReader reader;
-        try{
-            final InputStream file = getAssets().open("WordsAndDefinitions.txt");
-            reader = new BufferedReader(new InputStreamReader(file));
-            String line = reader.readLine();
-            while(line != null){
-                wordQuesserUtilities.addWordToHasMap(line);
-                line = reader.readLine();
+        Switch sw = findViewById(R.id.wordquesser_hourly_switch);
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        boolean valueBefore = settings.getBoolean("switchkey", false);
+        sw.setChecked(valueBefore);// gets value from shared preferences
+
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+                    // The toggle is enabled
+                    changeSwitch(true);
+
+
+                } else {
+                    // The toggle is disabled
+                    changeSwitch(false);
+                }
+
+                // saves to sharedprefs
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("switchkey", isChecked);
+                editor.commit();
             }
-        } catch(IOException ioe){
-            ioe.printStackTrace();
+
+
+        });
+
+
+        //for checking if the hashmap is empty or not
+        if (list.isEmpty()) {
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB empty", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not empty", Toast.LENGTH_SHORT).show();
         }
-        list = wordQuesserUtilities.getWordsAndDefinitions();
-
-
-
-//        //for cehcking if the hasmap is empty or not
-//        if (list.isEmpty()) {
-//            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB empty", Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not empty", Toast.LENGTH_SHORT).show();
-//        }
 
 
 
@@ -113,7 +116,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
     }
 
     private void lookDb() {
-        Intent intent = new Intent(WordQuesserStartingScreenActivity.this, LookDb.class);
+        Intent intent = new Intent(WordQuesserStartingScreenActivity.this, LookDbActivity.class);
         startActivity(intent);
 
     }
@@ -121,91 +124,50 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
     private void addWord() {
         Intent intent = new Intent(WordQuesserStartingScreenActivity.this, AddWordActivity.class);
         startActivity(intent);
-
     }
 
+    private void changeSwitch(boolean switchState){
+        Intent intent = new Intent(this, RepeatingNotificationCreator.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 ,intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
+        if (switchState){
 
-    public void sendOnChannel1(View v) {
+            Calendar calendar = Calendar.getInstance();
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000, pendingIntent);
+            Log.d("Switched", "ON");
 
-
-        List<Integer> randomKeyList = wordQuesserUtilities.getRandomKeyList();
-        Integer correctAnswerKeyKey = wordQuesserUtilities.getCorrectAnswerKey(randomKeyList);
-        String correctAnswerWord = list.get(correctAnswerKeyKey).getWord();
-
-
-
-
-        Collections.shuffle(randomKeyList);
-
-        String message = list.get(correctAnswerKeyKey).getDefinition();
-        String answer1 = list.get(randomKeyList.get(0)).getWord();
-        String answer2 = list.get(randomKeyList.get(1)).getWord();
-        String answer3 = list.get(randomKeyList.get(2)).getWord();
-
-
-
-
-
-        Intent answer1Intent = new Intent(this, NotificationReceiver.class);
-        answer1Intent.setAction(answer1);
-        answer1Intent.putExtra("corectAnswer", correctAnswerWord);
-        PendingIntent action1BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer1Intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        Intent answer2Intent = new Intent(this, NotificationReceiver.class);
-        answer2Intent.setAction(answer2);
-        answer2Intent.putExtra("corectAnswer", correctAnswerWord);
-        PendingIntent action2BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer2Intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        Intent answer3Intent = new Intent(this, NotificationReceiver.class);
-        answer3Intent.setAction(answer3);
-        answer3Intent.putExtra("corectAnswer", correctAnswerWord);
-        PendingIntent action3BroadCastIntent = PendingIntent.getBroadcast(this, 0, answer3Intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        //-----
-
-//        Intent broadCastIntent = new Intent(this, NotificationReceiver.class);
-//        broadCastIntent.putExtra("corectAnswer", correctAnswerWord);
-
-        android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_notification_1)
-//                .setContentTitle(title)
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .setColor(Color.BLUE)
-//                .setAutoCancel(true)
-//                .setOnlyAlertOnce(true)
-//                .setContentIntent(contentIntent) //happens when pressing notification
-                .addAction(R.mipmap.ic_launcher, answer1, action1BroadCastIntent)
-                .addAction(R.mipmap.ic_launcher, answer2, action2BroadCastIntent)
-                .addAction(R.mipmap.ic_launcher, answer3, action3BroadCastIntent)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                .build();
-
-        notificationManager.notify(1, notification);
+        } else{
+            alarmManager.cancel(pendingIntent);
+            Log.d("Switched", "OFF");
+        }
     }
 
+    public void sendNotificationOnChannel1() {
+        Intent intent = new Intent(WordQuesserStartingScreenActivity.this, RepeatingNotificationCreator.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 ,intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        try {
+            pendingIntent.send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void sendOnChannel2(View v) {
 
-        String title = "Channel 2";
-        String message = "Text channel 2";
+//        String title = "Channel 2";
+//        String message = "Text channel 2";
+//
+//        android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+//                .setSmallIcon(R.drawable.ic_notification_2)
+//                .setContentTitle(title)
+//                .setContentText(message)
+//                .setPriority(NotificationCompat.PRIORITY_LOW)
+//                .build();
+//
+//        notificationManager.notify(1, notification);
 
-        android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
-                .setSmallIcon(R.drawable.ic_notification_2)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .build();
-
-        notificationManager.notify(1, notification);
 
     }
-
-
 
 }

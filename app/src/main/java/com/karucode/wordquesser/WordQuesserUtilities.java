@@ -24,33 +24,21 @@ import java.util.Scanner;
 import static java.nio.file.Files.readAllLines;
 
 public class WordQuesserUtilities extends AppCompatActivity {
-    private Path pathToWordsAndDefinitions = Paths.get("WordsAndDefinitions.txt");
+//    private Path pathToWordsAndDefinitions = Paths.get("WordsAndDefinitions.txt");
     private HashMap<Integer, Word> wordsAndDefinitions = new HashMap<>();
     private Random random = new Random();
-    private Scanner scanner = new Scanner(System.in);
     int keyCounter = 0;
 
-    WordQuesserUtilities() {
-        if (!Files.exists(pathToWordsAndDefinitions)) {
-            try {
-                Files.createFile(pathToWordsAndDefinitions);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
 
-//        List<Integer> randomKeyList = getRandomKeyList();
-//        Integer correctAnswerKeyKey = getCorrectAnswerKey(randomKeyList);
-//        checkIfCorrect(correctAnswerKeyKey);
+    private WordQuesserUtilities() {
     }
 
+    private static final WordQuesserUtilities instance = new WordQuesserUtilities();
 
-    //reads word objects into hasmhap
-    void refreshWordsAndDefinitions() {
-
+    public static WordQuesserUtilities getInstance() {
+        return instance;
     }
-
 
     //creates a a list of randomly picked words from the words.txt file
     List<Integer> getRandomKeyList() {
@@ -74,42 +62,37 @@ public class WordQuesserUtilities extends AppCompatActivity {
 
     //prints out and returns correct answer key
     Integer getCorrectAnswerKey(List<Integer> randomKeyList) {
-//        String words = "";
-//        for (Integer number : randomKeyList) {
-//            words += wordsAndDefinitions.get(number).getWord() + ", ";
-//        }
 
-//        System.out.println(words);
         int randomWordNumber = random.nextInt(randomKeyList.size());
         Integer randomKey = randomKeyList.get(randomWordNumber);
-//        System.out.println(wordsAndDefinitions.get(randomKey).getDefinition());
-
-
         return randomKey;
 
     }
 
-//    void checkIfCorrect(Integer randomKey) {
-//
-//        System.out.println("Write the correct word");
-//        String userInput = scanner.nextLine();
-//
-//        if (userInput.equalsIgnoreCase(wordsAndDefinitions.get(randomKey).getWord())) {
-//            System.out.println("You are correct.");
-//            wordsAndDefinitions.get(randomKey).deductOneFromAttempts();
-//        } else {
-//            wordsAndDefinitions.get(randomKey).addOneToAttempts();
-//            System.out.println("Wrong answer.\n rightone is " + wordsAndDefinitions.get(randomKey).getWord());
-//        }
-//    }
 
     HashMap<Integer, Word> getWordsAndDefinitions() {
         return wordsAndDefinitions;
     }
 
+    void readWordsToHashMap(Context context){
+        BufferedReader reader;
+        try{
+            final InputStream file = context.getAssets().open("WordsAndDefinitions.txt");
+            reader = new BufferedReader(new InputStreamReader(file));
+            String line = reader.readLine();
+            while(line != null){
+                addWordToHasMap(line);
+                line = reader.readLine();
+            }
+        } catch(IOException ioe){
+            ioe.printStackTrace();
+        }
+    }
+
     void addWordToHasMap(String line) {
-        String[] oneLine = line.split(" ///");
-        Word word = new Word(Integer.parseInt(oneLine[0]), oneLine[1], oneLine[2]);
+        String[] oneLine = line.split(" /// ");
+        Word word = new Word(Integer.parseInt(oneLine[0]), oneLine[1], oneLine[2].substring(1));
+        //substring kaotab [leliigse space'i definititsiooni eest
         wordsAndDefinitions.put(keyCounter, word);
         keyCounter++;
     }

@@ -8,7 +8,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class LookDb extends AppCompatActivity {
+public class LookDbActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

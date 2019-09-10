@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.karucode.wordquesser">
 
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+
     <application
         android:name=".Notification"
         android:allowBackup="true"
@@ -10,10 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LookDb"></activity>
+        <activity android:name=".LookDbActivity"/>
         <activity android:name=".AddWordActivity" />
         <activity android:name=".WordQuesserGame" />
-        <activity android:name=".WordQuesserStartingScreenActivity" />
+        <activity android:name=".WordQuesserStartingScreenActivity"/>
         <activity android:name=".Quiz.QuizActivity" />
         <activity android:name=".Quiz.StartingScreenActivity">
             <intent-filter>
@@ -23,7 +25,10 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".NotificationReceiver" />
+        <receiver android:name=".RepeatingNotificationCreator" />
+        <receiver android:name=".NotificationActionReceiver" />
+
+
     </application>
 
 </manifest>
