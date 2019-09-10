@@ -45,11 +45,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/button_wordquesser_check_notification"
         android:layout_centerInParent="true"
-        android:text="Hourly notification:"
+        android:text="Recurring test-notification:"
         android:textOff="OFF"
         android:textOn="ON"/>
 
 
 </RelativeLayout>
 
-    <!--android:checked="true"-->
