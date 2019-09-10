@@ -1,7 +1,9 @@
 package com.karucode.wordquesser;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -19,8 +21,10 @@ import java.util.HashMap;
 public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
-    private static final String PREFS_NAME = "switchkey";
+    private static final String SWITCHKEY = "switchkey";
+    private static final String MILLIS_BEFORE = "millisInterval";
     public static final String NOTIFICATION_ID = "notificationId";
+    long millisInterval;
 
     private WordQuesserUtilities wordQuesserUtilities;
     HashMap<Integer, Word> list = new HashMap<>();
@@ -70,36 +74,63 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
 
+
+
         Switch sw = findViewById(R.id.wordquesser_hourly_switch);
 
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences settings = getSharedPreferences(SWITCHKEY, 0);
         boolean valueBefore = settings.getBoolean("switchkey", false);
+        millisInterval = settings.getLong(MILLIS_BEFORE, 900000);
         sw.setChecked(valueBefore);// gets value from shared preferences
-        changeSwitch(valueBefore);
+        changeSwitch(valueBefore, millisInterval);
+
+        String[] intervalList = getResources().getStringArray(R.array.choose_interval);
 
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
+
                 if (isChecked) {
                     // The toggle is enabled
 
-                    //TODO add the part where you can choose the interval
-                    //changeswitch will need a separate arameter from sharedprefs to see interval
 
-                    changeSwitch(true);
+                    //TODO add the part where you can choose the interval  - something weird is still here
+
+
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(WordQuesserStartingScreenActivity.this);
+                    mBuilder.setTitle("Choose the interval");
+
+                    mBuilder.setSingleChoiceItems(intervalList, -1, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            int minutes  = Integer.parseInt(intervalList[i]);
+                            millisInterval = minutes * 60 * 1000;
+                            dialogInterface.dismiss();
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putBoolean("switchkey", isChecked);
+                            editor.putLong("millisInterval", millisInterval);
+                            editor.commit();
+                        }
+                    });
+                    AlertDialog mDialog = mBuilder.create();
+                    mDialog.show();
+
+
+                    changeSwitch(true, millisInterval);
 
 
                 } else {
                     // The toggle is disabled
 
 
-                    changeSwitch(false);
+                    changeSwitch(false, millisInterval);
                 }
 
-                // saves to sharedprefs
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putBoolean("switchkey", isChecked);
-                editor.commit();
+//                // saves to sharedprefs
+//                SharedPreferences.Editor editor = settings.edit();
+//                editor.putBoolean("switchkey", isChecked);
+//                editor.putLong("millisInterval", millisInterval);
+//                editor.commit();
             }
 
 
@@ -133,7 +164,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void changeSwitch(boolean switchState){
+    private void changeSwitch(boolean switchState, long timeInMillis){
         Intent intent = new Intent(this, RepeatingNotificationCreator.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 ,intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -141,8 +172,8 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         if (switchState){
 
             Calendar calendar = Calendar.getInstance();
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent); // here you can change the interval of the notification
-            Log.d("Switched", "ON");
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), timeInMillis, pendingIntent); // here you can change the interval of the notification
+            Log.d("Switched", "ON " + timeInMillis);
 
         } else{
             alarmManager.cancel(pendingIntent);
