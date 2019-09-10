@@ -20,6 +20,9 @@ public class Word {
         return definition;
     }
 
+
+    //TODO attempts in Word object
+
 //    public int getAttempts() {
 //        return attempts;
 //    }

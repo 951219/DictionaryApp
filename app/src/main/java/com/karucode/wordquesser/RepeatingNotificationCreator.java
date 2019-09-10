@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.karucode.wordquesser.Notification.CHANNEL_1_ID;
+import static com.karucode.wordquesser.NotificationChannels.CHANNEL_1_ID;
 import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.NOTIFICATION_ID;
 
 

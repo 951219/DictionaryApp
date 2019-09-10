@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 
-import static com.karucode.wordquesser.Notification.CHANNEL_1_ID;
+import static com.karucode.wordquesser.NotificationChannels.CHANNEL_1_ID;
 
 
 public class NotificationActionReceiver extends BroadcastReceiver {
@@ -39,6 +39,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
 
             notificationManager.notify(notificationId, notification);
 
+            //TODO remove from attempts and save to hashmap
+
         } else  {
 
             android.app.Notification notification = new NotificationCompat.Builder(context, CHANNEL_1_ID)
@@ -53,6 +55,11 @@ public class NotificationActionReceiver extends BroadcastReceiver {
 
             notificationManager.notify(notificationId, notification);
 
+            //TODO add to attempts and save to hashmap
+
         }
+
+
+        //TODO save updated hashmap to txt
     }
 }

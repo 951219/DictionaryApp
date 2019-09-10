@@ -7,29 +7,67 @@
     tools:context=".AddWordActivity">
 
     <EditText
-        android:id="@+id/edit_text"
+        android:id="@+id/add_word_insert_word"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="60dp"
+        android:layout_marginTop="15dp"
+        android:hint="Write the word here"
+        android:textAlignment="center"
+        android:padding="15dp"
+        android:shadowColor="@android:color/black" />
 
-    <Button
-        android:id="@+id/button_save"
+
+    <TextView
+        android:id="@+id/add_word_definition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/edit_text"
+        android:layout_below="@+id/add_word_insert_word"
         android:layout_centerHorizontal="true"
+        android:freezesText="false"
+        android:scrollbars="vertical"
+        android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
-        android:onClick="save"
-        android:text="Save" />
+        android:text="Definition"
+        android:textColor="@android:color/black" />
 
-    <Button
-        android:id="@+id/button_load"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_save"
-        android:layout_alignStart="@+id/button_save"
-        android:layout_marginTop="17dp"
-        android:onClick="load"
-        android:text="Load" />
+        android:layout_below="@+id/add_word_definition"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/add_word_button_search"
+            android:layout_width="203dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:onClick="search"
+            android:text="Search" />
+
+
+        <Button
+            android:id="@+id/add_word_button_load"
+            android:layout_width="203dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:onClick="add"
+            android:text="Add to db" />
+
+
+    </LinearLayout>
+
+    <WebView
+        android:id="@+id/add_word_web_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="210dp">
+
+
+    </WebView>
 
 
 </RelativeLayout>

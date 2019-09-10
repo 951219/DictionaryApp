@@ -75,17 +75,24 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         boolean valueBefore = settings.getBoolean("switchkey", false);
         sw.setChecked(valueBefore);// gets value from shared preferences
+        changeSwitch(valueBefore);
 
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
                     // The toggle is enabled
+
+                    //TODO add the part where you can choose the interval
+                    //changeswitch will need a separate arameter from sharedprefs to see interval
+
                     changeSwitch(true);
 
 
                 } else {
                     // The toggle is disabled
+
+
                     changeSwitch(false);
                 }
 
@@ -100,10 +107,10 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
         //for checking if the hashmap is empty or not
-        if (list.isEmpty()) {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB empty", Toast.LENGTH_SHORT).show();
+        if (!list.isEmpty()) {
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB loaded", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not loaded", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -134,7 +141,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         if (switchState){
 
             Calendar calendar = Calendar.getInstance();
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000, pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent); // here you can change the interval of the notification
             Log.d("Switched", "ON");
 
         } else{
@@ -158,7 +165,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 //        String title = "Channel 2";
 //        String message = "Text channel 2";
 //
-//        android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+//        android.app.NotificationChannels notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
 //                .setSmallIcon(R.drawable.ic_notification_2)
 //                .setContentTitle(title)
 //                .setContentText(message)
