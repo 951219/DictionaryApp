@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.karucode.wordquesser.Notification.CHANNEL_1_ID;
+import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.NOTIFICATION_ID;
 
 
 public class RepeatingNotificationCreator extends BroadcastReceiver{
@@ -23,8 +24,8 @@ public class RepeatingNotificationCreator extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
 
 
-        SharedPreferences settings = context.getSharedPreferences("notificationId", 0);
-        int notificationId = settings.getInt("notificationId", 1);
+        SharedPreferences settings = context.getSharedPreferences(NOTIFICATION_ID, 0);
+        int notificationId = settings.getInt(NOTIFICATION_ID, 1);
 
         notificationId = notificationId +1;
 
@@ -34,7 +35,7 @@ public class RepeatingNotificationCreator extends BroadcastReceiver{
 
         WordQuesserUtilities wordQuesserUtilities = WordQuesserUtilities.getInstance();
         HashMap<Integer, Word> list = wordQuesserUtilities.getWordsAndDefinitions();
-
+        wordQuesserUtilities.readWordsToHashMap(context);
 
 
         List<Integer> randomKeyList = wordQuesserUtilities.getRandomKeyList();

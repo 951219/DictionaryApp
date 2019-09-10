@@ -16,12 +16,12 @@ public class Notification extends Application {
         super.onCreate();
 
 
-        createNotificationChanngels();
+        createNotificationChannels();
 
 
     }
 
-    private void createNotificationChanngels() {
+    private void createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationChannel channel1 = new NotificationChannel(
                     CHANNEL_1_ID,
