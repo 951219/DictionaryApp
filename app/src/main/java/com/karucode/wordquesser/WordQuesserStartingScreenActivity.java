@@ -21,10 +21,10 @@ import java.util.HashMap;
 public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
-    private static final String SWITCHKEY = "switchkey";
+    private static final String SWITCH_KEY = "switchKey";
     private static final String MILLIS_BEFORE = "millisInterval";
     public static final String NOTIFICATION_ID = "notificationId";
-    long millisInterval;
+    private long millisInterval;
 
     private WordQuesserUtilities wordQuesserUtilities;
     HashMap<Integer, Word> list = new HashMap<>();
@@ -78,11 +78,12 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
         Switch sw = findViewById(R.id.wordquesser_hourly_switch);
 
-        SharedPreferences settings = getSharedPreferences(SWITCHKEY, 0);
-        boolean valueBefore = settings.getBoolean("switchkey", false);
+        SharedPreferences settings = getSharedPreferences(SWITCH_KEY, 0);
+        boolean switchKeyValueBefore = settings.getBoolean("switchkey", false);
         millisInterval = settings.getLong(MILLIS_BEFORE, 900000);
-        sw.setChecked(valueBefore);// gets value from shared preferences
-        changeSwitch(valueBefore, millisInterval);
+        sw.setChecked(switchKeyValueBefore);// gets value from shared preferences and changed to switch to last value
+        changeSwitch(switchKeyValueBefore, millisInterval);
+        Log.d("Switch loaded saved value: ", switchKeyValueBefore + " : " + millisInterval);
 
         String[] intervalList = getResources().getStringArray(R.array.choose_interval);
 
@@ -92,11 +93,6 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
                 if (isChecked) {
                     // The toggle is enabled
-
-
-                    //TODO add the part where you can choose the interval  - something weird is still here
-
-
                     AlertDialog.Builder mBuilder = new AlertDialog.Builder(WordQuesserStartingScreenActivity.this);
                     mBuilder.setTitle("Choose the interval");
 
@@ -105,39 +101,33 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             int minutes  = Integer.parseInt(intervalList[i]);
                             millisInterval = minutes * 60 * 1000;
-                            dialogInterface.dismiss();
+
                             SharedPreferences.Editor editor = settings.edit();
                             editor.putBoolean("switchkey", isChecked);
                             editor.putLong("millisInterval", millisInterval);
                             editor.commit();
+
+                            changeSwitch(true, millisInterval);
+                            Log.d("Switched", "ON " + millisInterval);
+
+                            dialogInterface.dismiss();
                         }
                     });
                     AlertDialog mDialog = mBuilder.create();
                     mDialog.show();
 
 
-                    changeSwitch(true, millisInterval);
-
-
                 } else {
                     // The toggle is disabled
-
-
                     changeSwitch(false, millisInterval);
+                    Log.d("Switched", "OFF");
+
                 }
-
-//                // saves to sharedprefs
-//                SharedPreferences.Editor editor = settings.edit();
-//                editor.putBoolean("switchkey", isChecked);
-//                editor.putLong("millisInterval", millisInterval);
-//                editor.commit();
             }
-
-
         });
 
 
-        //for checking if the hashmap is empty or not
+        //for checking if the hashmap(db) is empty or not
         if (!list.isEmpty()) {
             Toast.makeText(WordQuesserStartingScreenActivity.this, "DB loaded", Toast.LENGTH_SHORT).show();
         } else {
@@ -173,11 +163,9 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
             Calendar calendar = Calendar.getInstance();
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), timeInMillis, pendingIntent); // here you can change the interval of the notification
-            Log.d("Switched", "ON " + timeInMillis);
 
         } else{
             alarmManager.cancel(pendingIntent);
-            Log.d("Switched", "OFF");
         }
     }
 
