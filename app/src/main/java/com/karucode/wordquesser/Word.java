@@ -3,7 +3,7 @@ package com.karucode.wordquesser;
 public class Word {
     private String word;
     private String definition;
-    private int attempts;
+    private Integer attempts;
 
 
     public Word(int attempts, String word, String definition) {
@@ -35,12 +35,18 @@ public class Word {
         this.definition = definition;
     }
 
+
+    public Integer getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(Integer attempts){
+        this.attempts = attempts;
+    }
+
     //TODO attempts in Word object
 
-//    public int getAttempts() {
-//        return attempts;
-//    }
-//
+
 //    // should be in another class?
 //
 //    public void addOneToAttempts() {

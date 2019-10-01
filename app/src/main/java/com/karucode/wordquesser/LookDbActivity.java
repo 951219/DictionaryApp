@@ -5,8 +5,14 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.FILE_NAME;
 
 public class LookDbActivity extends AppCompatActivity {
 
@@ -16,33 +22,64 @@ public class LookDbActivity extends AppCompatActivity {
         setContentView(R.layout.activity_look_db);
 
 
+//        try {
+//            InputStream is = getAssets().open(WordQuesserStartingScreenActivity.FILE_NAME);
+//
+//            // We guarantee that the available method returns the total
+//            // size of the asset...  of course, this does mean that a single
+//            // asset can't be more than 2 gigs.
+//            int size = is.available();
+//
+//            // Read the entire asset into a local byte buffer.
+//            byte[] buffer = new byte[size];
+//            is.read(buffer);
+//            is.close();
+//
+//            // Convert the buffer into a string.
+//            String text = new String(buffer);
+//
+//            // Finally stick the string into the text view.
+//            // Replace with whatever you need to have the text into.
+//
+        TextView tv = findViewById(R.id.db_look_text);
+
+        tv.setMovementMethod(new ScrollingMovementMethod());
+//            tv.setText(text);
+//
+//        } catch (IOException e) {
+//            // Should never happen!
+//            throw new RuntimeException(e);
+//        }
+
+
+        FileInputStream fis = null;
+
         try {
-            InputStream is = getAssets().open(WordQuesserStartingScreenActivity.TEST_FILE_NAME);
+            fis = openFileInput(WordQuesserStartingScreenActivity.TEST_FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String text;
 
-            // We guarantee that the available method returns the total
-            // size of the asset...  of course, this does mean that a single
-            // asset can't be more than 2 gigs.
-            int size = is.available();
+            while ((text = br.readLine()) != null) {
+                sb.append(text).append("\n");
+            }
 
-            // Read the entire asset into a local byte buffer.
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
+            tv.setText(sb.toString());
 
-            // Convert the buffer into a string.
-            String text = new String(buffer);
-
-            // Finally stick the string into the text view.
-            // Replace with whatever you need to have the text into.
-
-            TextView tv = findViewById(R.id.db_look_text);
-
-            tv.setMovementMethod(new ScrollingMovementMethod());
-            tv.setText(text);
-
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
-            // Should never happen!
-            throw new RuntimeException(e);
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
+
 }

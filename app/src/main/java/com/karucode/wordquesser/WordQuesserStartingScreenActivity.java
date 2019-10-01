@@ -15,6 +15,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -27,17 +30,33 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
     public static final String NOTIFICATION_ID = "notificationId";
     public static final String FILE_NAME = "WordsAndDefinitions.txt";
     public static final String TEST_FILE_NAME = "TEST_WordsAndDefinitions.txt";
+    public static final String TEXT_FILES_FOLDER = "/textfiles";
     private long millisInterval;
 
     private WordQuesserUtilities wordQuesserUtilities;
     HashMap<Integer, Word> list = new HashMap<>();
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_quesser_starting_screen);
+
+        File mFolder = new File(getFilesDir() + TEXT_FILES_FOLDER);
+        File imgFile = new File(mFolder.getAbsolutePath() + TEST_FILE_NAME);
+        if (!mFolder.exists()) {
+            mFolder.mkdir();
+        }
+        if (!imgFile.exists()) {
+            try {
+                imgFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            Log.d("Exists", "textfile");
+        }
+
 
 
         wordQuesserUtilities = WordQuesserUtilities.getInstance();
@@ -76,9 +95,6 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         });
 
 
-
-
-
         Switch sw = findViewById(R.id.wordquesser_hourly_switch);
 
         SharedPreferences settings = getSharedPreferences(SWITCH_KEY, 0);
@@ -102,7 +118,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
                     mBuilder.setSingleChoiceItems(intervalList, -1, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            int minutes  = Integer.parseInt(intervalList[i]);
+                            int minutes = Integer.parseInt(intervalList[i]);
                             millisInterval = minutes * 60 * 1000;
 
                             SharedPreferences.Editor editor = settings.edit();
@@ -132,11 +148,10 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
         //for checking if the hashmap(db) is empty or not
         if (!list.isEmpty()) {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB loaded", Toast.LENGTH_SHORT).show();
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB loaded, size: " +list.size(), Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not loaded", Toast.LENGTH_SHORT).show();
         }
-
 
 
     }
@@ -157,24 +172,24 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void changeSwitch(boolean switchState, long timeInMillis){
+    private void changeSwitch(boolean switchState, long timeInMillis) {
         Intent intent = new Intent(this, RepeatingNotificationCreator.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 ,intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        if (switchState){
+        if (switchState) {
 
             Calendar calendar = Calendar.getInstance();
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), timeInMillis, pendingIntent); // here you can change the interval of the notification
 
-        } else{
+        } else {
             alarmManager.cancel(pendingIntent);
         }
     }
 
     public void sendNotificationOnChannel1() {
         Intent intent = new Intent(WordQuesserStartingScreenActivity.this, RepeatingNotificationCreator.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 ,intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         try {
             pendingIntent.send();
         } catch (PendingIntent.CanceledException e) {

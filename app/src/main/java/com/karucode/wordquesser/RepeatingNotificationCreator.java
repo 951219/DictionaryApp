@@ -32,7 +32,7 @@ public class RepeatingNotificationCreator extends BroadcastReceiver{
 
         WordQuesserUtilities wordQuesserUtilities = WordQuesserUtilities.getInstance();
         HashMap<Integer, Word> list = wordQuesserUtilities.getWordsAndDefinitions();
-        wordQuesserUtilities.readWordsToHashMap(context);
+//        wordQuesserUtilities.readWordsToHashMap(context);
 
 
         List<Integer> randomKeyList = wordQuesserUtilities.getRandomKeyList();

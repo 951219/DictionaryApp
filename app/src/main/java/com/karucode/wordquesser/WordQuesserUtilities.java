@@ -65,6 +65,7 @@ public class WordQuesserUtilities extends AppCompatActivity {
     }
 
     void readWordsToHashMap(Context context){
+        wordsAndDefinitions = new HashMap<>();
         BufferedReader reader;
         try{
             final InputStream file = context.getAssets().open(WordQuesserStartingScreenActivity.FILE_NAME);
@@ -86,4 +87,17 @@ public class WordQuesserUtilities extends AppCompatActivity {
         wordsAndDefinitions.put(keyCounter, word);
         keyCounter++;
     }
+
+//    public String readWordsFromHashmapToString(HashMap<Integer, Word> list){
+//
+//        String line = "";
+////        for (int i = 0; i < list.size(); i++) {
+//            Word word = list.get(list.size()-1);
+//            line.concat(word.getAttempts() + " /// " + word.getWord() + " /// " + word.getDefinition());
+////        }
+//
+//
+//
+//      return line;
+//    }
 }
