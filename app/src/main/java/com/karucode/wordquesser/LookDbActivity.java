@@ -17,7 +17,7 @@ public class LookDbActivity extends AppCompatActivity {
 
 
         try {
-            InputStream is = getAssets().open("WordsAndDefinitions.txt");
+            InputStream is = getAssets().open(WordQuesserStartingScreenActivity.TEST_FILE_NAME);
 
             // We guarantee that the available method returns the total
             // size of the asset...  of course, this does mean that a single

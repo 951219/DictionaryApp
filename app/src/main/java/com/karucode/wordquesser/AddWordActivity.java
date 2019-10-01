@@ -22,12 +22,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 
 public class AddWordActivity extends AppCompatActivity {
 
     private EditText mEditText;
     private TextView definitionView;
     private WebView webView;
+    private Word wordObject;
+    private HashMap<Integer, Word> wordsAndDefinitions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +42,21 @@ public class AddWordActivity extends AppCompatActivity {
         definitionView.setMovementMethod(new ScrollingMovementMethod());
         webView = findViewById(R.id.add_word_web_view);
         webView.setWebViewClient(new WebViewClient());
+        wordsAndDefinitions = WordQuesserUtilities.getInstance().getWordsAndDefinitions();
 
 
 //        Button buttonSearchWord = findViewById(R.id.add_word_button_search);
 //        buttonSearchWord.setOnClickListener(V -> search());
 
 
-        Button buttonSaveWordAndDef = findViewById(R.id.add_word_button_load);
+        Button buttonSaveWordAndDef = findViewById(R.id.add_word_button_add_to_db);
         buttonSaveWordAndDef.setOnClickListener(V -> {
-            searchFromEKI();
+            if (wordObject!= null){
+                Toast.makeText(AddWordActivity.this,  "word object is added", Toast.LENGTH_SHORT).show();
+            addWordToDB(wordObject);
+            }else{
+                Toast.makeText(AddWordActivity.this,  "word object is null", Toast.LENGTH_SHORT).show();
+            };
         });
 
 
@@ -60,15 +69,17 @@ public class AddWordActivity extends AppCompatActivity {
     public void search(View v) {
         String input = mEditText.getText().toString();
         closeKeyboard();
-        webView.loadUrl("http://www.eki.ee/dict/ekss/index.cgi?Q=" + input + "&F=M");
-        searchFromEKI();
+        loadWebview(input);
+        searchFromEkiHtml();
 
     }
 
+    public void loadWebview(String input){
+        webView.loadUrl("http://www.eki.ee/dict/ekss/index.cgi?Q=" + input + "&F=M");
+    }
 
 
-    //TODO find the definition from eki html
-    void searchFromEKI() {
+    void searchFromEkiHtml() {
         String word =mEditText.getText().toString();
         word = word.toLowerCase();
         URL url;
@@ -80,7 +91,7 @@ public class AddWordActivity extends AppCompatActivity {
             // open the stream and put it into BufferedReader
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(conn.getInputStream()));
-            boolean added = false;
+            boolean found = false;
             String inputLine;
             while ((inputLine = br.readLine()) != null) {
                 if (inputLine.contains("https://sõnaveeb.ee/search/est-est/detail/" + word)) {
@@ -92,18 +103,22 @@ public class AddWordActivity extends AppCompatActivity {
                     System.out.println(word + " - " + inputLine);
 
                     definitionView.setText(word + " - " +inputLine);
+
+                    wordObject = new Word(0,word,inputLine);
+
 //                    Files.write(pathToWordsAndDefinitions, ("0" + " /// " + word + " /// " + inputLine + "\n").getBytes(), APPEND);
-                    added = true;
+                    found = true;
                     // }else{ Files.write(pathToDoubleCheck,(word+"\n").getBytes(),APPEND); }
 
                 }
             }
             br.close();
-            if (added) {
-                Toast.makeText(AddWordActivity.this, word + " Found", Toast.LENGTH_SHORT).show();
+            if (found) {
+                Toast.makeText(AddWordActivity.this, word + " found, press Add to DB", Toast.LENGTH_LONG).show();
                 //System.out.println("Definition " + inputLine);
             } else {
-                Toast.makeText(AddWordActivity.this, word + " Not Found", Toast.LENGTH_SHORT).show();
+                wordObject = null;
+                Toast.makeText(AddWordActivity.this, word + " not Found", Toast.LENGTH_SHORT).show();
 //                Files.write(pathToDoubleCheck, (word + "\n").getBytes(), APPEND);
             }
         } catch (
@@ -113,18 +128,25 @@ public class AddWordActivity extends AppCompatActivity {
     }
 
     //TODO add word and definition to db
-    public void addWordToDB(String word, String definition){
+    public void addWordToDB(Word word){
+        int number = wordsAndDefinitions.size()+1;
+        wordsAndDefinitions.put(number,word);
 
 
 
 
+
+
+
+        Toast.makeText(AddWordActivity.this, wordsAndDefinitions.get(number).getWord() + " added to hashmap", Toast.LENGTH_LONG).show();
+
+
+        //TODO loop to write hashmap to txt file
 
 
 
     }
 
-
-//    void searchFromEKI(String word) { }
 
     private void closeKeyboard() {
 

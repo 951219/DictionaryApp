@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".WordQuesserStartingScreenActivity">
+    tools:context="com.karucode.wordquesser.WordQuesserStartingScreenActivity">
 
     <Button
         android:id="@+id/button_wordquesser_start_game"

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
+
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -24,6 +25,8 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
     private static final String SWITCH_KEY = "switchKey";
     private static final String MILLIS_BEFORE = "millisInterval";
     public static final String NOTIFICATION_ID = "notificationId";
+    public static final String FILE_NAME = "WordsAndDefinitions.txt";
+    public static final String TEST_FILE_NAME = "TEST_WordsAndDefinitions.txt";
     private long millisInterval;
 
     private WordQuesserUtilities wordQuesserUtilities;
