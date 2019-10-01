@@ -29,7 +29,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.FILE_NAME;
 import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.TEST_FILE_NAME;
@@ -143,22 +145,18 @@ public class AddWordActivity extends AppCompatActivity {
         }
     }
 
-    //TODO add word and definition to db
+
     public void SaveHashMapToDB(Word word, HashMap<Integer, Word> list) {
         Integer number = list.size();
         list.put(number, word);
         Toast.makeText(AddWordActivity.this, list.size() + " size after", Toast.LENGTH_LONG).show();
-//        Log.d("Word is", list.get(number). + " : " + millisInterval);
-
-        //hashmapi sai lisatud
-
-//        String line = wordQuesserUtilities.readWordsFromHashmapToString(list);
-        String line = list.get(3).getWord() + list.get(number).getDefinition() + "\n";
-//
-        //TODO BUGGY
 
 
-        //siitmaalt allapoole workib
+        List<String> listOfStrings = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            Word wd = list.get(i);
+           listOfStrings.add((wd.getAttempts() + " /// " + wd.getWord() + " /// " + wd.getDefinition()));
+        }
 
 
         FileOutputStream fos = null;
@@ -166,16 +164,11 @@ public class AddWordActivity extends AppCompatActivity {
         try {
             fos = openFileOutput(TEST_FILE_NAME, MODE_PRIVATE);
 
-            for (int i = 0; i < list.size(); i++) {
-                Word wd = list.get(i);
-                line.concat((wd.getAttempts() + " /// " + wd.getWord() + " /// " + wd.getDefinition()));
-                fos.write((line + "\n").getBytes());
+
+            for (String string:listOfStrings) {
+                fos.write((string + "\n\n").getBytes());
             }
 
-
-
-//            Toast.makeText(this, "Saved to " + getFilesDir() + "/" + TEST_FILE_NAME,
-//                    Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -187,12 +180,7 @@ public class AddWordActivity extends AppCompatActivity {
                 }
             }
         }
-
-
-//        Toast.makeText(AddWordActivity.this, list.get(number).getWord() + " added to db", Toast.LENGTH_LONG).show();
     }
-
-    //TODO loop to write hashmap to txt file
 
 
     private void closeKeyboard() {

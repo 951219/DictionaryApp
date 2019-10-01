@@ -29,9 +29,9 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
     private static final String MILLIS_BEFORE = "millisInterval";
     public static final String NOTIFICATION_ID = "notificationId";
     public static final String FILE_NAME = "WordsAndDefinitions.txt";
-    public static final String TEST_FILE_NAME = "TEST_WordsAndDefinitions.txt";
     public static final String TEXT_FILES_FOLDER = "/textfiles";
     private long millisInterval;
+    public static final String TEST_FILE_NAME = "TEST_WordsAndDefinitions.txt";
 
     private WordQuesserUtilities wordQuesserUtilities;
     HashMap<Integer, Word> list = new HashMap<>();
