@@ -18,17 +18,11 @@ import android.widget.Toast;
 import org.jsoup.Jsoup;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -131,13 +125,10 @@ public class AddWordActivity extends AppCompatActivity {
             }
             br.close();
             if (found) {
-//                Toast.makeText(AddWordActivity.this, wordObject.getAttempts() + " found, press Add to DB", Toast.LENGTH_LONG).show();
-                Toast.makeText(AddWordActivity.this, list.size() + " size before", Toast.LENGTH_LONG).show();
-                //System.out.println("Definition " + inputLine);
+                Toast.makeText(AddWordActivity.this, word + " found, safe to add to db", Toast.LENGTH_SHORT).show();
             } else {
-//                wordObject = null;
-                Toast.makeText(AddWordActivity.this, word + " not Found", Toast.LENGTH_SHORT).show();
-//                Files.write(pathToDoubleCheck, (word + "\n").getBytes(), APPEND);
+                wordObject= null;
+                Toast.makeText(AddWordActivity.this, word + " not found, maybe a typo?", Toast.LENGTH_SHORT).show();
             }
         } catch (
                 IOException e) {
@@ -149,8 +140,6 @@ public class AddWordActivity extends AppCompatActivity {
     public void SaveHashMapToDB(Word word, HashMap<Integer, Word> list) {
         Integer number = list.size();
         list.put(number, word);
-        Toast.makeText(AddWordActivity.this, list.size() + " size after", Toast.LENGTH_LONG).show();
-
 
         List<String> listOfStrings = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
@@ -166,7 +155,7 @@ public class AddWordActivity extends AppCompatActivity {
 
 
             for (String string:listOfStrings) {
-                fos.write((string + "\n\n").getBytes());
+                fos.write((string + "\n").getBytes());
             }
 
         } catch (IOException e) {
@@ -180,6 +169,7 @@ public class AddWordActivity extends AppCompatActivity {
                 }
             }
         }
+        Toast.makeText(AddWordActivity.this,  "DB overwritten", Toast.LENGTH_SHORT).show();
     }
 
 

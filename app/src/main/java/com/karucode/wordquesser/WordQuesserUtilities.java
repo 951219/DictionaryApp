@@ -2,8 +2,10 @@ package com.karucode.wordquesser;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,13 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.TEST_FILE_NAME;
+
 
 public class WordQuesserUtilities extends AppCompatActivity {
 
     private HashMap<Integer, Word> wordsAndDefinitions = new HashMap<>();
     private Random random = new Random();
     int keyCounter = 0;
-
 
 
     private WordQuesserUtilities() {
@@ -64,21 +67,53 @@ public class WordQuesserUtilities extends AppCompatActivity {
         return wordsAndDefinitions;
     }
 
-    void readWordsToHashMap(Context context){
+    void readWordsToHashMap(Context context) {
         wordsAndDefinitions = new HashMap<>();
         BufferedReader reader;
-        try{
+        try {
             final InputStream file = context.getAssets().open(WordQuesserStartingScreenActivity.FILE_NAME);
             reader = new BufferedReader(new InputStreamReader(file));
             String line = reader.readLine();
-            while(line != null){
+            while (line != null) {
                 addWordToHasMapFromDB(line);
                 line = reader.readLine();
             }
-        } catch(IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
     }
+
+
+//    void readWordsToHashMap(Context context) {
+//        wordsAndDefinitions = new HashMap<>();
+//        FileInputStream fis = null;
+//        try {
+//            fis = openFileInput(TEST_FILE_NAME);
+//            InputStreamReader isr = new InputStreamReader(fis);
+//            BufferedReader br = new BufferedReader(isr);
+////            StringBuilder sb = new StringBuilder();
+//
+////            String text;
+////
+////            while ((text = br.readLine()) != null) {
+//////                sb.append(text).append("\n");
+////                addWordToHasMapFromDB(text);
+////            }
+//
+//
+//            String line = br.readLine();
+//            while (line != null) {
+//                addWordToHasMapFromDB(line);
+//                line = br.readLine();
+//            }
+//
+//            Toast.makeText(context, "Read from " + TEST_FILE_NAME , Toast.LENGTH_SHORT).show();
+//        } catch (IOException ioe) {
+//            ioe.printStackTrace();
+//        }
+//    }
+
+
 
     void addWordToHasMapFromDB(String line) {
         String[] oneLine = line.split(" /// ");
@@ -87,17 +122,36 @@ public class WordQuesserUtilities extends AppCompatActivity {
         wordsAndDefinitions.put(keyCounter, word);
         keyCounter++;
     }
-
-//    public String readWordsFromHashmapToString(HashMap<Integer, Word> list){
-//
-//        String line = "";
-////        for (int i = 0; i < list.size(); i++) {
-//            Word word = list.get(list.size()-1);
-//            line.concat(word.getAttempts() + " /// " + word.getWord() + " /// " + word.getDefinition());
-////        }
-//
-//
-//
-//      return line;
-//    }
 }
+
+//    public void load(View v) {
+//        FileInputStream fis = null;
+//
+//        try {
+//            fis = openFileInput(FILE_NAME);
+//            InputStreamReader isr = new InputStreamReader(fis);
+//            BufferedReader br = new BufferedReader(isr);
+//            StringBuilder sb = new StringBuilder();
+//            String text;
+//
+//            while ((text = br.readLine()) != null) {
+//                sb.append(text).append("\n");
+//            }
+//
+//            mEditText.setText(sb.toString());
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (fis != null) {
+//                try {
+//                    fis.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+//
