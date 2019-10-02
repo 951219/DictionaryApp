@@ -83,7 +83,7 @@ public class WordQuesserUtilities extends AppCompatActivity {
         }
     }
 
-
+    //TODO read from TEST_FILE_NAME
 //    void readWordsToHashMap(Context context) {
 //        wordsAndDefinitions = new HashMap<>();
 //        FileInputStream fis = null;
@@ -123,6 +123,10 @@ public class WordQuesserUtilities extends AppCompatActivity {
         keyCounter++;
     }
 }
+
+
+// example of how to read from internal storage
+
 
 //    public void load(View v) {
 //        FileInputStream fis = null;
