@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.karucode.wordquesser.R;
 import com.karucode.wordquesser.WordQuesserStartingScreenActivity;
+import com.karucode.wordquesser.WordQuesserUtilities;
 
 public class StartingScreenActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_QUIZ = 1;
@@ -72,6 +73,8 @@ public class StartingScreenActivity extends AppCompatActivity {
     }
 
     private void startWordQuesser() {
+
+        //TODO empty hashmap, et iga kord uuesti juurde ei loeks
         Intent intent = new Intent(StartingScreenActivity.this, WordQuesserStartingScreenActivity.class);
         startActivity(intent);
     }

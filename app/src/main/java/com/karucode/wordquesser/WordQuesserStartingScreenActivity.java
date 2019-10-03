@@ -75,6 +75,9 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         Button buttonAddWord = findViewById(R.id.button_wordquesser_add_word);
         buttonAddWord.setOnClickListener(V -> addWord());
 
+        Button buttonLoadFromAssets = findViewById(R.id.button_wordquesser_load_from_assets_to_txt);
+        buttonLoadFromAssets.setOnClickListener(V -> wordQuesserUtilities.readWordsToHashMapFromAssets(this));
+
 
         Button buttonCheckNotification = findViewById(R.id.button_wordquesser_check_notification);
         buttonCheckNotification.setOnClickListener(new View.OnClickListener() {
@@ -147,11 +150,12 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
         //for checking if the hashmap(db) is empty or not
-        if (!list.isEmpty()) {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB loaded, size: " +list.size(), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not loaded", Toast.LENGTH_SHORT).show();
+        if (list.isEmpty()) {
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB loaded is empty", Toast.LENGTH_SHORT).show();
         }
+//        else {
+//            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not loaded", Toast.LENGTH_SHORT).show();
+//        }
 
 
     }

@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -39,9 +40,9 @@ public class LookDbActivity extends AppCompatActivity {
 //            // Finally stick the string into the text view.
 //            // Replace with whatever you need to have the text into.
 //
-        TextView tv = findViewById(R.id.db_look_text);
+//        TextView tv = findViewById(R.id.db_look_text);
+//        tv.setMovementMethod(new ScrollingMovementMethod());
 
-        tv.setMovementMethod(new ScrollingMovementMethod());
 //            tv.setText(text);
 //
 //        } catch (IOException e) {
@@ -49,7 +50,9 @@ public class LookDbActivity extends AppCompatActivity {
 //            throw new RuntimeException(e);
 //        }
 
-
+        TextView tv = findViewById(R.id.db_look_text);
+        tv.setMovementMethod(new ScrollingMovementMethod());
+        Toast.makeText(this, "Read from TEST_FILE_NAME, size: " + WordQuesserUtilities.getInstance().getWordsAndDefinitions().size(), Toast.LENGTH_LONG).show();
         FileInputStream fis = null;
 
         try {
