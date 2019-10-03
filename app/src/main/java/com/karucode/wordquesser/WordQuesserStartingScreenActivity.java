@@ -70,11 +70,16 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
         Button buttonLookDB = findViewById(R.id.button_wordquesser_look_db);
         buttonLookDB.setOnClickListener(V -> lookDb());
+        
+        Button buttonLookNewDB = findViewById(R.id.button_wordquesser_look_db_new);
+        buttonLookNewDB.setOnClickListener(V -> lookDbNew());
 
 
         Button buttonAddWord = findViewById(R.id.button_wordquesser_add_word);
         buttonAddWord.setOnClickListener(V -> addWord());
 
+
+        //TODO clear txt, then load from assets to txt
         Button buttonLoadFromAssets = findViewById(R.id.button_wordquesser_load_from_assets_to_txt);
         buttonLoadFromAssets.setOnClickListener(V -> wordQuesserUtilities.readWordsToHashMapFromAssets(this));
 
@@ -92,7 +97,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v) {
                 Toast.makeText(WordQuesserStartingScreenActivity.this, "LOOOOONG pressed", Toast.LENGTH_SHORT).show();
-                sendOnChannel2(v);
+//                sendOnChannel2(v);
                 return true;
             }
         });
@@ -158,6 +163,11 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 //        }
 
 
+    }
+
+    private void lookDbNew() {
+        Intent intent = new Intent(this,LookDbActivityNew.class);
+        startActivity(intent);
     }
 
     private void startGame() {

@@ -71,7 +71,7 @@ public class WordQuesserUtilities {
     }
 
 
-//     reads from assets
+//     reads from assets, will crash the app if afterwards opening new DB
     void readWordsToHashMapFromAssets(Context context) {
         wordsAndDefinitions = new HashMap<>();
         BufferedReader reader;

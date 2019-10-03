@@ -144,7 +144,7 @@ public class AddWordActivity extends AppCompatActivity {
         List<String> listOfStrings = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             Word wd = list.get(i);
-           listOfStrings.add((wd.getAttempts() + " /// " + wd.getWord() + " /// " + wd.getDefinition()));
+           listOfStrings.add((wd.getAttempts() + " /// " +  wd.getWord() + " /// " + wd.getDefinition()));
         }
 
 
