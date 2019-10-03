@@ -1,34 +1,30 @@
 package com.karucode.wordquesser;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
-import static java.nio.file.Files.readAllLines;
+import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.TEST_FILE_NAME;
 
-public class WordQuesserUtilities extends AppCompatActivity {
-//    private Path pathToWordsAndDefinitions = Paths.get("WordsAndDefinitions.txt");
+
+public class WordQuesserUtilities {
+    //extends AppCompatActivity
+
     private HashMap<Integer, Word> wordsAndDefinitions = new HashMap<>();
     private Random random = new Random();
-    int keyCounter = 0;
-
+    private int keyCounter = 0;
 
 
     private WordQuesserUtilities() {
@@ -74,26 +70,104 @@ public class WordQuesserUtilities extends AppCompatActivity {
         return wordsAndDefinitions;
     }
 
-    void readWordsToHashMap(Context context){
+
+//     reads from assets
+    void readWordsToHashMapFromAssets(Context context) {
+        wordsAndDefinitions = new HashMap<>();
         BufferedReader reader;
-        try{
-            final InputStream file = context.getAssets().open("WordsAndDefinitions.txt");
+        try {
+            final InputStream file = context.getAssets().open(WordQuesserStartingScreenActivity.FILE_NAME);
             reader = new BufferedReader(new InputStreamReader(file));
             String line = reader.readLine();
-            while(line != null){
-                addWordToHasMap(line);
+            while (line != null) {
+                addWordToHasMapFromDB(line);
                 line = reader.readLine();
             }
-        } catch(IOException ioe){
+            Log.d("DB", "loaded from asset FILE_NAME, size: "+ wordsAndDefinitions.size());
+            Toast.makeText(context, "DB loaded from ASSETS, size: " + wordsAndDefinitions.size(), Toast.LENGTH_SHORT).show();
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
     }
 
-    void addWordToHasMap(String line) {
+    void readWordsToHashMap(Context context) {
+        FileInputStream fis = null;
+
+        try {
+            fis = context.openFileInput(TEST_FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+
+            String text;
+
+            while ((text = br.readLine()) != null) {
+                addWordToHasMapFromDB(text);
+            }
+
+            Log.d("DB", "loaded from txt TEST_FILE_NAME, size: "+ wordsAndDefinitions.size());
+            Toast.makeText(context, "DB loaded from TXT, size: " + wordsAndDefinitions.size(), Toast.LENGTH_SHORT).show();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    private void addWordToHasMapFromDB(String line) {
         String[] oneLine = line.split(" /// ");
         Word word = new Word(Integer.parseInt(oneLine[0]), oneLine[1], oneLine[2].substring(1));
         //substring kaotab [leliigse space'i definititsiooni eest
         wordsAndDefinitions.put(keyCounter, word);
         keyCounter++;
     }
+
+    public void emptyHashMap(){
+        wordsAndDefinitions = null;
+    }
 }
+
+
+// example of how to read from internal storage
+
+
+//    public void load(View v) {
+//        FileInputStream fis = null;
+//
+//        try {
+//            fis = openFileInput(FILE_NAME);
+//            InputStreamReader isr = new InputStreamReader(fis);
+//            BufferedReader br = new BufferedReader(isr);
+//            StringBuilder sb = new StringBuilder();
+//            String text;
+//
+//            while ((text = br.readLine()) != null) {
+//                sb.append(text).append("\n");
+//            }
+//
+//            mEditText.setText(sb.toString());
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (fis != null) {
+//                try {
+//                    fis.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+//

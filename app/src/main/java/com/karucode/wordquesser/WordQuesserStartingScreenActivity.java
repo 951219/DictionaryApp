@@ -1,7 +1,9 @@
 package com.karucode.wordquesser;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
+
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -19,18 +25,38 @@ import java.util.HashMap;
 public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
 
-    private static final String PREFS_NAME = "switchkey";
+    private static final String SWITCH_KEY = "switchKey";
+    private static final String MILLIS_BEFORE = "millisInterval";
     public static final String NOTIFICATION_ID = "notificationId";
+    public static final String FILE_NAME = "WordsAndDefinitions.txt";
+    public static final String TEXT_FILES_FOLDER = "/textfiles";
+    private long millisInterval;
+    public static final String TEST_FILE_NAME = "TEST_WordsAndDefinitions.txt";
 
     private WordQuesserUtilities wordQuesserUtilities;
     HashMap<Integer, Word> list = new HashMap<>();
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_quesser_starting_screen);
+
+        File mFolder = new File(getFilesDir() + TEXT_FILES_FOLDER);
+        File imgFile = new File(mFolder.getAbsolutePath() + TEST_FILE_NAME);
+        if (!mFolder.exists()) {
+            mFolder.mkdir();
+        }
+        if (!imgFile.exists()) {
+            try {
+                imgFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            Log.d("Exists", "textfile");
+        }
+
 
 
         wordQuesserUtilities = WordQuesserUtilities.getInstance();
@@ -48,6 +74,9 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 
         Button buttonAddWord = findViewById(R.id.button_wordquesser_add_word);
         buttonAddWord.setOnClickListener(V -> addWord());
+
+        Button buttonLoadFromAssets = findViewById(R.id.button_wordquesser_load_from_assets_to_txt);
+        buttonLoadFromAssets.setOnClickListener(V -> wordQuesserUtilities.readWordsToHashMapFromAssets(this));
 
 
         Button buttonCheckNotification = findViewById(R.id.button_wordquesser_check_notification);
@@ -69,43 +98,64 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         });
 
 
-
         Switch sw = findViewById(R.id.wordquesser_hourly_switch);
 
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        boolean valueBefore = settings.getBoolean("switchkey", false);
-        sw.setChecked(valueBefore);// gets value from shared preferences
+        SharedPreferences settings = getSharedPreferences(SWITCH_KEY, 0);
+        boolean switchKeyValueBefore = settings.getBoolean("switchkey", false);
+        millisInterval = settings.getLong(MILLIS_BEFORE, 900000);
+        sw.setChecked(switchKeyValueBefore);// gets value from shared preferences and changed to switch to last value
+        changeSwitch(switchKeyValueBefore, millisInterval);
+        Log.d("Switch loaded saved value: ", switchKeyValueBefore + " : " + millisInterval);
+
+        String[] intervalList = getResources().getStringArray(R.array.choose_interval);
 
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
+
                 if (isChecked) {
                     // The toggle is enabled
-                    changeSwitch(true);
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(WordQuesserStartingScreenActivity.this);
+                    mBuilder.setTitle("Choose the interval");
+
+                    mBuilder.setSingleChoiceItems(intervalList, -1, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            int minutes = Integer.parseInt(intervalList[i]);
+                            millisInterval = minutes * 60 * 1000;
+
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putBoolean("switchkey", isChecked);
+                            editor.putLong("millisInterval", millisInterval);
+                            editor.commit();
+
+                            changeSwitch(true, millisInterval);
+                            Log.d("Switched", "ON " + millisInterval);
+
+                            dialogInterface.dismiss();
+                        }
+                    });
+                    AlertDialog mDialog = mBuilder.create();
+                    mDialog.show();
 
 
                 } else {
                     // The toggle is disabled
-                    changeSwitch(false);
+                    changeSwitch(false, millisInterval);
+                    Log.d("Switched", "OFF");
+
                 }
-
-                // saves to sharedprefs
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putBoolean("switchkey", isChecked);
-                editor.commit();
             }
-
-
         });
 
 
-        //for checking if the hashmap is empty or not
+        //for checking if the hashmap(db) is empty or not
         if (list.isEmpty()) {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB empty", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB loaded is empty", Toast.LENGTH_SHORT).show();
         }
-
+//        else {
+//            Toast.makeText(WordQuesserStartingScreenActivity.this, "DB not loaded", Toast.LENGTH_SHORT).show();
+//        }
 
 
     }
@@ -126,26 +176,24 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void changeSwitch(boolean switchState){
+    private void changeSwitch(boolean switchState, long timeInMillis) {
         Intent intent = new Intent(this, RepeatingNotificationCreator.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 ,intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        if (switchState){
+        if (switchState) {
 
             Calendar calendar = Calendar.getInstance();
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000, pendingIntent);
-            Log.d("Switched", "ON");
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), timeInMillis, pendingIntent); // here you can change the interval of the notification
 
-        } else{
+        } else {
             alarmManager.cancel(pendingIntent);
-            Log.d("Switched", "OFF");
         }
     }
 
     public void sendNotificationOnChannel1() {
         Intent intent = new Intent(WordQuesserStartingScreenActivity.this, RepeatingNotificationCreator.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 ,intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         try {
             pendingIntent.send();
         } catch (PendingIntent.CanceledException e) {
@@ -158,7 +206,7 @@ public class WordQuesserStartingScreenActivity extends AppCompatActivity {
 //        String title = "Channel 2";
 //        String message = "Text channel 2";
 //
-//        android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+//        android.app.NotificationChannels notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
 //                .setSmallIcon(R.drawable.ic_notification_2)
 //                .setContentTitle(title)
 //                .setContentText(message)

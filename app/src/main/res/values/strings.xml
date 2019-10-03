@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">WordQuesser</string>
+
+
+    <string-array name="choose_interval">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+    </string-array>
 </resources>

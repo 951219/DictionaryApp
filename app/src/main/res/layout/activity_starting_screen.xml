@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
     android:padding="16dp"
-    tools:context="com.karucode.wordquesser.Quiz.StartingScreenActivity">
+    tools:context="com.karucode.wordquesser.com.karucode.wordguesser.Quiz.StartingScreenActivity">
 
     <TextView
         android:layout_width="wrap_content"

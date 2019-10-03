@@ -14,9 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.karucode.wordquesser.Notification.CHANNEL_1_ID;
-import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.NOTIFICATION_ID;
-
 
 public class RepeatingNotificationCreator extends BroadcastReceiver{
 
@@ -24,8 +21,8 @@ public class RepeatingNotificationCreator extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
 
 
-        SharedPreferences settings = context.getSharedPreferences(NOTIFICATION_ID, 0);
-        int notificationId = settings.getInt(NOTIFICATION_ID, 1);
+        SharedPreferences settings = context.getSharedPreferences(WordQuesserStartingScreenActivity.NOTIFICATION_ID, 0);
+        int notificationId = settings.getInt(WordQuesserStartingScreenActivity.NOTIFICATION_ID, 1);
 
         notificationId = notificationId +1;
 
@@ -35,7 +32,7 @@ public class RepeatingNotificationCreator extends BroadcastReceiver{
 
         WordQuesserUtilities wordQuesserUtilities = WordQuesserUtilities.getInstance();
         HashMap<Integer, Word> list = wordQuesserUtilities.getWordsAndDefinitions();
-        wordQuesserUtilities.readWordsToHashMap(context);
+//        wordQuesserUtilities.readWordsToHashMap(context);
 
 
         List<Integer> randomKeyList = wordQuesserUtilities.getRandomKeyList();
@@ -78,7 +75,7 @@ public class RepeatingNotificationCreator extends BroadcastReceiver{
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
 
-        android.app.Notification notification = new NotificationCompat.Builder(context, CHANNEL_1_ID)
+        android.app.Notification notification = new NotificationCompat.Builder(context, NotificationChannels.CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_notification_1)
                 .setContentText(definition)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

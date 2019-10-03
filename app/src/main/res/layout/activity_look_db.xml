@@ -5,15 +5,16 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:background="@color/colorBackground"
 android:padding="16dp"
-tools:context=".LookDbActivity">
+tools:context="com.karucode.wordquesser.LookDbActivity">
 
 <TextView
     android:id="@+id/db_look_text"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Score: 0"
+    android:text="Empty"
     android:textColor="@android:color/black"
     android:freezesText="true"
-    android:scrollbars = "vertical"/>
+    android:scrollbars = "vertical"
+    android:gravity="bottom"/>
 
 </RelativeLayout>

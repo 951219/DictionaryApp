@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".WordQuesserStartingScreenActivity">
+    tools:context="com.karucode.wordquesser.WordQuesserStartingScreenActivity">
 
     <Button
         android:id="@+id/button_wordquesser_start_game"
@@ -39,12 +39,20 @@
         android:layout_below="@id/button_wordquesser_add_word"
         android:text="Test notification " />
 
+    <Button
+        android:id="@+id/button_wordquesser_load_from_assets_to_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/button_wordquesser_check_notification"
+        android:text="Load from Assets " />
+
 
     <Switch
         android:id="@+id/wordquesser_hourly_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/button_wordquesser_check_notification"
+        android:layout_below="@id/button_wordquesser_load_from_assets_to_txt"
         android:layout_centerInParent="true"
         android:text="Recurring test-notification:"
         android:textOff="OFF"
