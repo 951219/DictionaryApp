@@ -24,11 +24,19 @@
         android:text="Open DB " />
 
     <Button
-        android:id="@+id/button_wordquesser_add_word"
+        android:id="@+id/button_wordquesser_look_db_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_below="@id/button_wordquesser_look_db"
+        android:text="Open New DB " />
+
+    <Button
+        android:id="@+id/button_wordquesser_add_word"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/button_wordquesser_look_db_new"
         android:text="Add a word " />
 
     <Button
