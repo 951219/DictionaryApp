@@ -36,9 +36,12 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordHolder>{
     public void onBindViewHolder(@NonNull WordHolder wordHolder, int i) {
         Log.d(TAG, "onBindViewHolder: called");
 
-        wordHolder.textViewWord.setText(list.get(i).getWord());
-        wordHolder.textViewDefinition.setText(list.get(i).getDefinition());
-        wordHolder.textViewAttempts.setText(Integer.toString(list.get(i).getAttempts()));
+        if (list.containsKey(i)) {
+
+            wordHolder.textViewWord.setText(list.get(i).getWord());
+            wordHolder.textViewDefinition.setText(list.get(i).getDefinition());
+            wordHolder.textViewAttempts.setText(Integer.toString(list.get(i).getAttempts()));
+        }
 
     }
 

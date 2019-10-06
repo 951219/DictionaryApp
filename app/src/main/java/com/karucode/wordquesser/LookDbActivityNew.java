@@ -1,5 +1,6 @@
 package com.karucode.wordquesser;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,7 +48,18 @@ public class LookDbActivityNew extends AppCompatActivity implements WordAdapter.
 //        /What happenes when block is pressed
        Word word = list.get(position);
 
-        Toast.makeText(this,word.getWord(),Toast.LENGTH_SHORT).show();
+//       Toast.makeText(this,word.getWord(),Toast.LENGTH_SHORT).show();
+
+       list.remove(position);
+        WordQuesserUtilities.getInstance().refreshHashMapAndSaveToDB(this,list);
+
+        startActivity(new Intent(this, LookDbActivityNew.class));
+        finish();
+
+        Toast.makeText(this, "Removed " + word.getWord(), Toast.LENGTH_SHORT).show();
+        //TODO nullpointer right here
+//        startActivity(getIntent());
+//        finish();
     }
 }
 
