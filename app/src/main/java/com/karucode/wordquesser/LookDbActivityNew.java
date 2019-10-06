@@ -17,9 +17,10 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 
 
-public class LookDbActivityNew extends AppCompatActivity {
+public class LookDbActivityNew extends AppCompatActivity implements WordAdapter.OnWordListener{
 
 
+    HashMap<Integer, Word> list = new HashMap<>();
     private static final String TAG = "LookDbActivityNew";
 
 
@@ -32,18 +33,28 @@ public class LookDbActivityNew extends AppCompatActivity {
         setContentView(R.layout.activity_look_db_new);
         Log.d(TAG, "onCreate: started");
 
+
+        list = WordQuesserUtilities.getInstance().getWordsAndDefinitions();
         initRecyclerView();
     }
 
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: started");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        WordAdapter adapter = new WordAdapter();
+        WordAdapter adapter = new WordAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     }
 
 
+    @Override
+    public void OnWordClick(int position) {
+
+//        /What happenes when block is pressed
+       Word word = list.get(position);
+
+        Toast.makeText(this,word.getWord(),Toast.LENGTH_SHORT).show();
+    }
 }
 
