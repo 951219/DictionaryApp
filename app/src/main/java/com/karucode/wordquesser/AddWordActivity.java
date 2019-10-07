@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.FILE_NAME;
 import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.TEST_FILE_NAME;
 
 public class AddWordActivity extends AppCompatActivity {
@@ -62,9 +63,8 @@ public class AddWordActivity extends AppCompatActivity {
         Button buttonSaveWordAndDef = findViewById(R.id.add_word_button_add_to_db);
         buttonSaveWordAndDef.setOnClickListener(V -> {
             if (wordObject != null) {
-//                Integer number = list.size();
-//                list.put(number, wordObject);
-                saveHashMapToDB(wordObject, list);
+
+                SaveHashMapToDB(wordObject, list);
             } else {
                 Toast.makeText(AddWordActivity.this, "word object is null", Toast.LENGTH_SHORT).show();
             }
@@ -127,7 +127,7 @@ public class AddWordActivity extends AppCompatActivity {
             if (found) {
                 Toast.makeText(AddWordActivity.this, word + " found, safe to add to db", Toast.LENGTH_SHORT).show();
             } else {
-                wordObject = null;
+                wordObject= null;
                 Toast.makeText(AddWordActivity.this, word + " not found, maybe a typo?", Toast.LENGTH_SHORT).show();
             }
         } catch (
@@ -137,7 +137,7 @@ public class AddWordActivity extends AppCompatActivity {
     }
 
 
-    public void saveHashMapToDB(Word word, HashMap<Integer, Word> list) {
+    public void SaveHashMapToDB(Word word, HashMap<Integer, Word> list) {
         Integer number = list.size();
         list.put(number, word);
 

@@ -8,7 +8,6 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.karucode.wordquesser.WordQuesserStartingScreenActivity.TEST_FILE_NAME;
 
 
@@ -73,7 +71,7 @@ public class WordQuesserUtilities {
     }
 
 
-    //     reads from assets, will crash the app if afterwards opening new DB
+//     reads from assets, will crash the app if afterwards opening new DB
     void readWordsToHashMapFromAssets(Context context) {
         wordsAndDefinitions = new HashMap<>();
         BufferedReader reader;
@@ -85,7 +83,7 @@ public class WordQuesserUtilities {
                 addWordToHasMapFromDB(line);
                 line = reader.readLine();
             }
-            Log.d("DB", "loaded from asset FILE_NAME, size: " + wordsAndDefinitions.size());
+            Log.d("DB", "loaded from asset FILE_NAME, size: "+ wordsAndDefinitions.size());
             Toast.makeText(context, "DB loaded from ASSETS, size: " + wordsAndDefinitions.size(), Toast.LENGTH_SHORT).show();
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -106,7 +104,7 @@ public class WordQuesserUtilities {
                 addWordToHasMapFromDB(text);
             }
 
-            Log.d("DB", "loaded from txt TEST_FILE_NAME, size: " + wordsAndDefinitions.size());
+            Log.d("DB", "loaded from txt TEST_FILE_NAME, size: "+ wordsAndDefinitions.size());
             Toast.makeText(context, "DB loaded from TXT, size: " + wordsAndDefinitions.size(), Toast.LENGTH_SHORT).show();
 
         } catch (FileNotFoundException e) {
@@ -133,49 +131,43 @@ public class WordQuesserUtilities {
         keyCounter++;
     }
 
-    public void emptyHashMap() {
+    public void emptyHashMap(){
         wordsAndDefinitions = null;
-    }
-
-    private void saveHashMapToDB(Context context, HashMap<Integer, Word> list) {
-
-        List<String> listOfStrings = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            if (list.containsKey(i)) {
-                Word wd = list.get(i);
-                listOfStrings.add((wd.getAttempts() + " /// " + wd.getWord() + " /// " + wd.getDefinition()));
-            }
-        }
-
-
-        FileOutputStream fos = null;
-
-        try {
-            fos = context.openFileOutput(TEST_FILE_NAME, MODE_PRIVATE);
-
-
-            for (String string : listOfStrings) {
-                fos.write((string + "\n").getBytes());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        Toast.makeText(context, "DB overwritten", Toast.LENGTH_SHORT).show();
-    }
-
-    public void refreshHashMapAndSaveToDB(Context context, HashMap<Integer, Word> list) {
-        wordsAndDefinitions = list;
-        saveHashMapToDB(context, wordsAndDefinitions);
     }
 }
 
 
+// example of how to read from internal storage
+
+
+//    public void load(View v) {
+//        FileInputStream fis = null;
+//
+//        try {
+//            fis = openFileInput(FILE_NAME);
+//            InputStreamReader isr = new InputStreamReader(fis);
+//            BufferedReader br = new BufferedReader(isr);
+//            StringBuilder sb = new StringBuilder();
+//            String text;
+//
+//            while ((text = br.readLine()) != null) {
+//                sb.append(text).append("\n");
+//            }
+//
+//            mEditText.setText(sb.toString());
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (fis != null) {
+//                try {
+//                    fis.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+//
